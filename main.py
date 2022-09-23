@@ -1,5 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Path
 from pydantic import BaseModel
+
+app = FastAPI()
 
 
 class Item(BaseModel):
@@ -9,12 +11,12 @@ class Item(BaseModel):
     tax: float | None = None
 
 
-app = FastAPI()
+class User(BaseModel):
+    username: str
+    full_name: str | None = None
 
 
 @app.put('/items/{item_id}')
-async def create_item(item_id: int, item: Item, q: str | None = None):
-    result = {'item_id': item_id, **item.dict()}
-    if q:
-        result.update({'q': q})
-    return result
+async def update_item(item_id: int, item: Item, user: User):
+    results = {'item_id': item_id, 'item': item, 'user': user}
+    return results
