@@ -1,24 +1,28 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
-
-origins = [
-    'http://localhost.tiangolo.com',
-    'https://localhost.tiangolo.com',
-    'http://localhost',
-    'http://localhost:8080',
+tags_metadata = [
+    {
+        'name': 'users',
+        'description': 'Operations with users. The **login** logic is also here.',
+    },
+    {
+        'name': 'items',
+        'description': 'Manage items. So _fancy_ they have their own docs.',
+        'externalDocs': {
+            'description': 'Items external docs',
+            'url': 'https://fastapi.tiangolo.com/',
+        },
+    },
 ]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=['*'],
-    allow_headers=['*'],
-)
+app = FastAPI(openapi_tags=tags_metadata)
 
 
-@app.get('/')
-async def main():
-    return {'message': 'Hello World'}
+@app.get('/users/', tags=['users'])
+async def get_users():
+    return [{'name': 'Harry'}, {'name': 'Ron'}]
+
+
+@app.get('/items/', tags=['items'])
+async def get_items():
+    return [{'name': 'wand'}, {'name': 'flying broom'}]
