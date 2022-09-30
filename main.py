@@ -1,15 +1,13 @@
-import uvicorn
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, status
 
 app = FastAPI()
 
-
-@app.get('/')
-def root():
-    a = 'a'
-    b = 'b' + a
-    return {'hello world': b}
+tasks = {'foo': 'Listen to the Bar Fighters'}
 
 
-if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=8000)
+@app.put('/get-or-create-task/{task_id}', status_code=200)
+def get_or_create_task(task_id: str, response: Response):
+    if task_id not in tasks:
+        tasks[task_id] = "This didn't exist before"
+        response.status_code = status.HTTP_201_CREATED
+    return tasks[task_id]
